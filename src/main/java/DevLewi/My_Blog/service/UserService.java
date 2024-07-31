@@ -19,5 +19,5 @@ public class UserService {
     }
 
     public User verifyUserLogin(User user){}
-    User userResult = userMapper.getUserByUsernameAndPassword(user.getUserName)
+    User userResult = userMapper.getUserByUsernameAndPassword(user.getUserName);
 }
