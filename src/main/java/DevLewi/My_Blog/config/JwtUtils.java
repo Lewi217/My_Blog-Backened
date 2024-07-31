@@ -2,6 +2,7 @@ package DevLewi.My_Blog.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -26,8 +27,10 @@ public class JwtUtils {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
+
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
+        JwtParser parser = Jwts.parserBuilder().setSigningKey(SECRET_KEY).build();
+        return parser.parseClaimsJws(token).getBody();
     }
 
     private Boolean isTokenExpired(String token) {
@@ -39,24 +42,29 @@ public class JwtUtils {
         return createToken(claims, userDetails.getUsername());
     }
 
-    public String generateToken(UserDetails userDetails , Map<String,Object> claims) {
+    public String generateToken(UserDetails userDetails, Map<String, Object> claims) {
         return createToken(claims, userDetails.getUsername());
     }
 
     private String createToken(Map<String, Object> claims, String subject) {
-
-        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(subject)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .compact();
     }
 
-    public String createToken(Map<String,Object> claims, UserDetails userDetails){
-        return Jwts.builder().setClaims(claims)
+    public String createToken(Map<String, Object> claims, UserDetails userDetails) {
+        return Jwts.builder()
+                .setClaims(claims)
                 .setSubject(userDetails.getUsername())
-                .claim("authorities" , userDetails.getAuthorities())
+                .claim("authorities", userDetails.getAuthorities())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis()+ TimeUnit.HOURS.toMillis(24)))
-                .signWith(SignatureAlgorithm.HS256 , SECRET_KEY).compact();
+                .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(24)))
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .compact();
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
