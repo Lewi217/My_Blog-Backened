@@ -1,5 +1,6 @@
 package DevLewi.My_Blog.config;
 
+import DevLewi.My_Blog.bean.User;
 import DevLewi.My_Blog.bean.UserLogin;
 import DevLewi.My_Blog.service.UserService;
 import jakarta.servlet.FilterChain;
@@ -53,5 +54,4 @@ public class JwtAthFilter extends OncePerRequestFilter {
         }
         filterChain.doFilter(request,response);
     }
-
 }

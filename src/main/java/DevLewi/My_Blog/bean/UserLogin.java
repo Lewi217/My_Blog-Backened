@@ -17,13 +17,18 @@ public class UserLogin implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Map your user types to roles here
-        if (Integer.parseInt(user.getUserType()) == 0) {
-            return Collections.singleton(new SimpleGrantedAuthority("ROLE_ADMIN"));
-        } else if (Integer.parseInt(user.getUserType()) == 1) {
-            return Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
+        // Map user types to roles
+        if (user.getUserType() != null) {
+            switch (user.getUserType()) {
+                case "0":
+                    return Collections.singleton(new SimpleGrantedAuthority("ROLE_ADMIN"));
+                case "1":
+                    return Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
+                default:
+                    return Collections.emptyList();
+            }
         }
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
@@ -38,26 +43,24 @@ public class UserLogin implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        // Implement logic to check if the account is non-expired
-        return true; // Example: always consider the account as non-expired
+        // Example implementation; modify as needed
+        return true; // Always consider the account as non-expired
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        // Implement logic to check if the account is non-locked
-        return true; // Example: always consider the account as non-locked
+        // Example implementation; modify as needed
+        return true; // Always consider the account as non-locked
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        // Implement logic to check if credentials are non-expired
-        return true; // Example: always consider credentials as non-expired
+        // Example implementation; modify as needed
+        return true; // Always consider credentials as non-expired
     }
 
     @Override
     public boolean isEnabled() {
-        // Implement logic to check if the user is enabled
-        return Integer.parseInt(user.getStatus()) != 1;
+        return user.getStatus() != null && !"1".equals(user.getStatus()); // Assuming "1" means disabled
     }
-
 }

@@ -29,25 +29,30 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.time.Duration;
 import java.util.Arrays;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
     private final JwtAthFilter jwtAuthFilter;
     private final UserService userService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/**/auth/**").permitAll()
-                        .requestMatchers("/secure-endpoint").hasRole("USER")
-                        .requestMatchers("/users/login").permitAll()
-                        .requestMatchers("/articles/author/**").authenticated()
-                        .requestMatchers("/articles/**").permitAll()
-                        .anyRequest().authenticated()
+                .cors(withDefaults())
+                .authorizeHttpRequests(authorizeRequests ->
+                        authorizeRequests
+                                .requestMatchers("/users/login").permitAll() // Allow login without authentication
+                                .requestMatchers("/**/auth/**").permitAll() // Allow other auth-related endpoints
+                                .requestMatchers("/articles/author/**").authenticated() // Require authentication for author endpoints
+                                .requestMatchers("/articles/**").permitAll() // Allow access to articles
+                                .requestMatchers("/secure-endpoint").hasRole("USER") // Specific role requirement
+                                .anyRequest().authenticated() // Default to authentication for all other requests
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -60,15 +65,15 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        final DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userDetailsService());
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        return http.getSharedObject(AuthenticationConfiguration.class).getAuthenticationManager();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 
     @Bean
@@ -89,7 +94,7 @@ public class SecurityConfig {
 
     @Order(1)
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);

@@ -4,6 +4,7 @@ import DevLewi.My_Blog.bean.User;
 import DevLewi.My_Blog.config.JwtUtils;
 import DevLewi.My_Blog.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,7 +14,7 @@ public class UserService {
     private final JwtUtils jwtUtils;
 
     @Autowired
-    public UserService(UserMapper userMapper, JwtUtils jwtUtils){
+    public UserService(UserMapper userMapper, JwtUtils jwtUtils) {
         this.userMapper = userMapper;
         this.jwtUtils = jwtUtils;
     }
@@ -40,5 +41,4 @@ public class UserService {
         String email = jwtUtils.extractUsername(jwt);//here is convert jwt token into email
         return userMapper.getUserByEmail(email);
     }
-
 }
