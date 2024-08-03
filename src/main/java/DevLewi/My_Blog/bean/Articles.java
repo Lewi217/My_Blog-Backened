@@ -1,144 +1,152 @@
 package DevLewi.My_Blog.bean;
 
-import org.springframework.stereotype.Repository;
-
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.util.Date;
 
-@Repository
+@Entity
+@Table(name = "articles") // Ensure this matches your database table name
 public class Articles {
 
-        private Long articleId;
-        private String title;
-        private String content;
-        private Long authorId;
-        private String authorName;//authorName is custom attribute (it is not exists in database articles table)
-        private Date publicationDate;
-        private String tag;
-        private Long views;
-        private Long likes;
-        private Long comments;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long articleId; // Unique identifier for the article
 
-        public Articles() {
-        }
+    private String title;
+    private String content;
+    private Long authorId;
+    private String authorName; // Custom attribute not in the database
+    private Date publicationDate;
+    private String tag;
+    private Long views;
+    private Long likes;
+    private Long comments;
 
-        public Articles(Long articleId, String title, String content, Long authorId, Date publicationDate, String tag, Long views, Long likes, Long comments) {
-            this.articleId = articleId;
-            this.title = title;
-            this.content = content;
-            this.authorId = authorId;
-            this.publicationDate = publicationDate;
-            this.tag = tag;
-            this.views = views;
-            this.likes = likes;
-            this.comments = comments;
-        }
+    public Articles() {
+    }
 
-        //include authorName
-        public Articles(Long articleId, String title, String content, Long authorId, String authorName, Date publicationDate, String tag, Long views, Long likes, Long comments) {
-            this.articleId = articleId;
-            this.title = title;
-            this.content = content;
-            this.authorId = authorId;
-            this.authorName = authorName;
-            this.publicationDate = publicationDate;
-            this.tag = tag;
-            this.views = views;
-            this.likes = likes;
-            this.comments = comments;
-        }
+    public Articles(Long articleId, String title, String content, Long authorId, Date publicationDate, String tag, Long views, Long likes, Long comments) {
+        this.articleId = articleId;
+        this.title = title;
+        this.content = content;
+        this.authorId = authorId;
+        this.publicationDate = publicationDate;
+        this.tag = tag;
+        this.views = views;
+        this.likes = likes;
+        this.comments = comments;
+    }
 
-        public String getAuthorName() {
-            return authorName;
-        }
+    // Constructor including authorName
+    public Articles(Long articleId, String title, String content, Long authorId, String authorName, Date publicationDate, String tag, Long views, Long likes, Long comments) {
+        this.articleId = articleId;
+        this.title = title;
+        this.content = content;
+        this.authorId = authorId;
+        this.authorName = authorName;
+        this.publicationDate = publicationDate;
+        this.tag = tag;
+        this.views = views;
+        this.likes = likes;
+        this.comments = comments;
+    }
 
-        public void setAuthorName(String authorName) {
-            this.authorName = authorName;
-        }
+    public Long getArticleId() {
+        return articleId;
+    }
 
-        public Long getArticleId() {
-            return articleId;
-        }
+    public void setArticleId(Long articleId) {
+        this.articleId = articleId;
+    }
 
-        public void setArticleId(Long articleId) {
-            this.articleId = articleId;
-        }
+    public String getTitle() {
+        return title;
+    }
 
-        public String getTitle() {
-            return title;
-        }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-        public void setTitle(String title) {
-            this.title = title;
-        }
+    public String getContent() {
+        return content;
+    }
 
-        public String getContent() {
-            return content;
-        }
+    public void setContent(String content) {
+        this.content = content;
+    }
 
-        public void setContent(String content) {
-            this.content = content;
-        }
+    public Long getAuthorId() {
+        return authorId;
+    }
 
-        public Long getAuthorId() {
-            return authorId;
-        }
+    public void setAuthorId(Long authorId) {
+        this.authorId = authorId;
+    }
 
-        public void setAuthorId(Long authorId) {
-            this.authorId = authorId;
-        }
+    public String getAuthorName() {
+        return authorName;
+    }
 
-        public Date getPublicationDate() {
-            return publicationDate;
-        }
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
+    }
 
-        public void setPublicationDate(Date publicationDate) {
-            this.publicationDate = publicationDate;
-        }
+    public Date getPublicationDate() {
+        return publicationDate;
+    }
 
-        public String getTag() {
-            return tag;
-        }
+    public void setPublicationDate(Date publicationDate) {
+        this.publicationDate = publicationDate;
+    }
 
-        public void setTag(String tag) {
-            this.tag = tag;
-        }
+    public String getTag() {
+        return tag;
+    }
 
-        public Long getViews() {
-            return views;
-        }
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
 
-        public void setViews(Long views) {
-            this.views = views;
-        }
+    public Long getViews() {
+        return views;
+    }
 
-        public Long getLikes() {
-            return likes;
-        }
+    public void setViews(Long views) {
+        this.views = views;
+    }
 
-        public void setLikes(Long likes) {
-            this.likes = likes;
-        }
+    public Long getLikes() {
+        return likes;
+    }
 
-        public Long getComments() {
-            return comments;
-        }
+    public void setLikes(Long likes) {
+        this.likes = likes;
+    }
 
-        public void setComments(Long comments) {
-            this.comments = comments;
-        }
+    public Long getComments() {
+        return comments;
+    }
 
-        @Override
-        public String toString() {
-            return "Articles{" +
-                    "articleId=" + articleId +
-                    ", title='" + title + '\'' +
-                    ", content='" + content + '\'' +
-                    ", authorId=" + authorId +
-                    ", publicationDate=" + publicationDate +
-                    ", tag='" + tag + '\'' +
-                    ", views=" + views +
-                    ", likes=" + likes +
-                    ", comments=" + comments +
-                    '}';
-        }
+    public void setComments(Long comments) {
+        this.comments = comments;
+    }
+
+    @Override
+    public String toString() {
+        return "Articles{" +
+                "articleId=" + articleId +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", authorId=" + authorId +
+                ", authorName='" + authorName + '\'' +
+                ", publicationDate=" + publicationDate +
+                ", tag='" + tag + '\'' +
+                ", views=" + views +
+                ", likes=" + likes +
+                ", comments=" + comments +
+                '}';
+    }
 }

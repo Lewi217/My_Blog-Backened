@@ -6,9 +6,11 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -93,5 +95,18 @@ public class JwtUtils {
     public Boolean validateToken(String token, User user) {
         UserDetails userDetails = new UserLogin(user); // Convert User to UserLogin
         return validateToken(token, userDetails); // Delegate to existing method
+    }
+
+    // Get authentication object from the token
+    public Authentication getAuthentication(String token) {
+        UserDetails userDetails = new UserLogin(getUserFromToken(token));
+        return new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+    }
+
+    // Extract User object from the token (for demonstration, adjust as needed)
+    private User getUserFromToken(String token) {
+        String username = extractUsername(token);
+        // Fetch user from database or service
+        return new User(username, "", "", "", "", "", "", "", LocalDateTime.now(), LocalDateTime.now(), 0, ""); // Replace with actual user fetching logic
     }
 }

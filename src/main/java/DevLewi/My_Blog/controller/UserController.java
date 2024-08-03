@@ -37,23 +37,29 @@ public class UserController {
             );
 
             final UserDetails userDetails = new UserLogin(userService.getUserByEmail(request.getEmail()));
-            System.out.println(userDetails);
             if (userDetails != null) {
-                System.out.println("Authentication successful");
                 return ResponseEntity.ok(jwtUtils.generateToken(userDetails));
             } else {
-                System.out.println("User not found");
-                return ResponseEntity.status(200).body("User not found");
+                return ResponseEntity.status(404).body("User not found");
             }
         } catch (BadCredentialsException ex) {
-            System.out.println("Authentication failed: " + ex.getMessage());
             return ResponseEntity.status(401).body("Authentication failed: " + ex.getMessage());
-        }catch (ExpiredJwtException ex) {
-            System.out.println("Authentication failed: " + ex.getMessage());
+        } catch (ExpiredJwtException ex) {
             return ResponseEntity.status(402).body("Authentication failed: " + ex.getMessage());
         } catch (Exception e) {
-            System.out.println("Some error has occurred: " + e.getMessage());
-            return ResponseEntity.status(500).body("Some error has occurred");
+            return ResponseEntity.status(500).body("Some error has occurred: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody User user) {
+        try {
+            userService.registerUser(user);
+            return ResponseEntity.status(201).body("User registered successfully");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Some error has occurred: " + e.getMessage());
         }
     }
 
@@ -61,5 +67,4 @@ public class UserController {
     public User getUserByToken(@RequestHeader("Authorization") String jwtToken){
         return userService.getUserByToken(jwtToken);
     }
-
 }

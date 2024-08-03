@@ -1,23 +1,18 @@
 package DevLewi.My_Blog.config;
 
-import DevLewi.My_Blog.bean.User;
-import DevLewi.My_Blog.bean.UserLogin;
-import DevLewi.My_Blog.service.UserService;
+import DevLewi.My_Blog.service.CustomUserDetailsService;
+import DevLewi.My_Blog.config.JwtAthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -29,45 +24,41 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.time.Duration;
 import java.util.Arrays;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAthFilter jwtAuthFilter;
-    private final UserService userService;
+    private final JwtAthFilter jwtAthFilter;
+    private final @Lazy CustomUserDetailsService customUserDetailsService; // Add @Lazy here
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(withDefaults())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/users/login").permitAll() // Allow login without authentication
-                                .requestMatchers("/**/auth/**").permitAll() // Allow other auth-related endpoints
-                                .requestMatchers("/articles/author/**").authenticated() // Require authentication for author endpoints
-                                .requestMatchers("/articles/**").permitAll() // Allow access to articles
-                                .requestMatchers("/secure-endpoint").hasRole("USER") // Specific role requirement
-                                .anyRequest().authenticated() // Default to authentication for all other requests
+                                .requestMatchers("/users/login").permitAll()
+                                .requestMatchers("/**/auth/**").permitAll()
+                                .requestMatchers("/articles/author/**").authenticated()
+                                .requestMatchers("/articles/**").permitAll()
+                                .requestMatchers("/secure-endpoint").hasRole("USER")
+                                .anyRequest().authenticated()
                 )
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider() {
+    public AuthenticationProvider authenticationProvider(PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService());
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
+        authenticationProvider.setUserDetailsService(customUserDetailsService); // Use CustomUserDetailsService
+        authenticationProvider.setPasswordEncoder(passwordEncoder);
         return authenticationProvider;
     }
 
@@ -81,18 +72,6 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return email -> {
-            User user = userService.getUserByEmail(email);
-            if (user == null) {
-                throw new UsernameNotFoundException("User not found with email: " + email);
-            }
-            return new UserLogin(user);
-        };
-    }
-
-    @Order(1)
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

@@ -1,12 +1,23 @@
 package DevLewi.My_Blog.bean;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.util.Date;
 
+@Entity
+@Table(name = "follow") // Ensure this matches your database table name
 public class Follow {
-    private Long id;
-    private Long userId;
-    private Long follower;
-    private Date followDate;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id; // Unique identifier for the follow record
+
+    private Long userId; // The user who is being followed
+    private Long follower; // The user who is following
+    private Date followDate; // The date the follow action occurred
 
     public Follow() {
     }
@@ -50,5 +61,13 @@ public class Follow {
         this.followDate = followDate;
     }
 
+    @Override
+    public String toString() {
+        return "Follow{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", follower=" + follower +
+                ", followDate=" + followDate +
+                '}';
+    }
 }
-
