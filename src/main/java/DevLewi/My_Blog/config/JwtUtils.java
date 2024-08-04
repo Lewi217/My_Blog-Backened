@@ -107,6 +107,6 @@ public class JwtUtils {
     private User getUserFromToken(String token) {
         String username = extractUsername(token);
         // Fetch user from database or service
-        return new User(username, "", "", "", "", "", "", "", LocalDateTime.now(), LocalDateTime.now(), 0, ""); // Replace with actual user fetching logic
+        return new User(); // Replace with actual user fetching logic
     }
 }

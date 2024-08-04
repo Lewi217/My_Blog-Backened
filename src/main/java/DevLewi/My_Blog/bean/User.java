@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -37,22 +37,6 @@ public class User implements Serializable {
     private LocalDateTime updateTime;
     private Integer delFlag; // 0 = not deleted, 1 = deleted
     private String description;
-
-    // Define a constructor to match the one used in JwtUtils
-    public User(String userName, String password, String status, String email, String phoneNumber, String gender, String avatar, String userType, LocalDateTime createTime, LocalDateTime updateTime, Integer delFlag, String description) {
-        this.userName = userName;
-        this.password = password;
-        this.status = status;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.gender = gender;
-        this.avatar = avatar;
-        this.userType = userType;
-        this.createTime = createTime;
-        this.updateTime = updateTime;
-        this.delFlag = delFlag;
-        this.description = description;
-    }
 
     @Override
     public String toString() {

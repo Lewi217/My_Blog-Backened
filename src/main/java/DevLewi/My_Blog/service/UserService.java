@@ -2,26 +2,24 @@ package DevLewi.My_Blog.service;
 
 import DevLewi.My_Blog.bean.User;
 import DevLewi.My_Blog.mapper.UserMapper;
-import DevLewi.My_Blog.config.JwtUtils; // Import JwtUtils
+import DevLewi.My_Blog.config.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 
 @Service
 public class UserService {
 
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
-    private final JwtUtils jwtUtils; // Add JwtUtils as a dependency
+    private final JwtUtils jwtUtils;
 
     @Autowired
     public UserService(UserMapper userMapper, PasswordEncoder passwordEncoder, JwtUtils jwtUtils) {
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
-        this.jwtUtils = jwtUtils; // Initialize JwtUtils
+        this.jwtUtils = jwtUtils;
     }
 
     public User verifyUserLogin(User user) {
@@ -42,7 +40,7 @@ public class UserService {
 
     public User getUserByToken(String token) {
         String jwt = token.substring(7); // Remove "Bearer " prefix
-        String email = jwtUtils.extractUsername(jwt); // Convert JWT token into email
+        String email = jwtUtils.extractUsername(jwt);
         return userMapper.getUserByEmail(email);
     }
 
