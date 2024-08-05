@@ -4,11 +4,14 @@ This project is a backend application built using Spring Boot, designed to provi
 ## Features
 [Spring](https://start.spring.io/).\
 [MySql](https://www.mysql.com/).\
-[MyBatis](https://blog.mybatis.org/)
+[MyBatis](https://blog.mybatis.org/).\
+[utilizes JWT for authentication and login](https://jwt.io/)
+
 
 ### To run this project 
 clone the repository and run `mvn clean package`.\
 it is available at `localhost:8080`
+Remember to also clone `myblog-frontend`
 
 #### Contributions are accepted
 To contribute to this project fork your own copy and clone the repository.\
