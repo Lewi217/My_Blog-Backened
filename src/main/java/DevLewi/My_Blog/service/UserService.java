@@ -8,9 +8,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.logging.Logger;
+
 @Service
 public class UserService {
 
+    private static final Logger logger = Logger.getLogger(UserService.class.getName());
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
@@ -35,6 +38,7 @@ public class UserService {
     }
 
     public User getUserByEmail(String email) {
+        logger.info("Fetching user by email: " + email);
         return userMapper.getUserByEmail(email);
     }
 

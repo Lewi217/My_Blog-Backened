@@ -16,10 +16,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 @Component
 public class JwtAthFilter extends OncePerRequestFilter {
 
+    private static final Logger logger = Logger.getLogger(JwtAthFilter.class.getName());
     private final JwtUtils jwtUtils;
     private final UserDetailsService userDetailsService;
 
@@ -34,7 +36,9 @@ public class JwtAthFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String token = extractToken(request);
         if (token != null) {
+            logger.info("Token extracted: " + token);
             String username = jwtUtils.extractUsername(token);
+            logger.info("Username extracted from token: " + username);
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                 if (jwtUtils.validateToken(token, userDetails)) {
